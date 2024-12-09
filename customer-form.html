@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM - Customer Form</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { width: 50%; margin: auto; }
+        h1 { text-align: center; }
+        form { display: flex; flex-direction: column; }
+        input { margin: 10px 0; padding: 10px; }
+        button { padding: 10px; }
+        .buttons { display: flex; justify-content: space-between; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CRM - Customer Relationship Manager</h1>
+        <form id="customerForm">
+            <input type="hidden" id="customerId">
+            <label for="firstName">First Name:</label>
+            <input type="text" id="firstName" required>
+
+            <label for="lastName">Last Name:</label>
+            <input type="text" id="lastName" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" required>
+
+            <div class="buttons">
+                <button type="button" onclick="saveCustomer()">Save</button>
+                <button type="button" onclick="window.location.href='index.html'">Back</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const apiUrl = `http://localhost:8080/api/customers`;
+
+        async function getCustomer(id) {
+            try {
+                const response = await fetch(`${apiUrl}/${id}`);
+                const customer = await response.json();
+                document.querySelector('#customerId').value = customer.id;
+                document.querySelector('#firstName').value = customer.firstName;
+                document.querySelector('#lastName').value = customer.lastName;
+                document.querySelector('#email').value = customer.email;
+            } catch (error) {
+                console.error('Error fetching customer:', error);
+            }
+        }
+
+        async function saveCustomer() {
+            const id = document.querySelector('#customerId').value;
+            const customer = {
+                firstName: document.querySelector('#firstName').value,
+                lastName: document.querySelector('#lastName').value,
+                email: document.querySelector('#email').value,
+            };
+
+            try {
+                if (id) {
+                    // Update customer
+                    await fetch(`${apiUrl}/${id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(customer),
+                    });
+                } else {
+                    // Create new customer
+                    await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(customer),
+                    });
+                }
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error('Error saving customer:', error);
+            }
+        }
+
+        function getQueryParam(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // Load customer data if editing
+        const id = getQueryParam('id');
+        if (id) {
+            getCustomer(id);
+        }
+    </script>
+</body>
+</html>
