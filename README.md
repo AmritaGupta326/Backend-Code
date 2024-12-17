@@ -1,1 +1,1 @@
-create project using Java, Spring Boot, MySQL, Microservices, restApi, Hibernate, JPA & use HTML AND CSS in some project for frontend part.
+Develop a project using Java, Spring Boot, and Microservices architecture with MySQL as the database. Implement the backend using RESTful APIs, Hibernate, and JPA for data persistence. For the frontend, incorporate HTML and CSS to deliver a responsive user interface.
